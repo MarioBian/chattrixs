@@ -5,6 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { useState } from "react";
 import Login from "../components/Login";
 import Register from "../components/Register";
 import SideNav from "../components/SideNav";
@@ -12,14 +13,14 @@ import Chat from "../components/Chat";
 import ChangePassword from "../components/ChangePassword";
 
 function App() {
-  const user = localStorage.getItem("token");
+  const [user, setUser] = useState(localStorage.getItem("token"));
   return (
     <Router>
       <Routes>
         {!user ? (
           <>
             <Route path="/" element={<Navigate to="/login" />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<Login setUser={setUser} />} />
             <Route path="/changepassword" element={<ChangePassword />} />
             <Route path="/register" element={<Register />} />
             <Route path="*" element={<Navigate to="/login" />} />
@@ -30,7 +31,7 @@ function App() {
               path="/chat"
               element={
                 <>
-                  <SideNav />
+                  <SideNav setUser={setUser} />
                   <Chat />
                 </>
               }
