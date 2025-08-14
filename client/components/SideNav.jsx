@@ -33,7 +33,7 @@ const SideNav = () => {
       </div>
       <button
         onClick={handleLogout}
-        className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
+        className="bg-red-500 text-white px-4 py-1 cursor-pointer rounded hover:bg-red-600"
       >
         Logga ut
       </button>

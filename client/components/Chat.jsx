@@ -146,7 +146,7 @@ const Chat = () => {
         />
         <button
           type="submit"
-          className="ml-2 px-4 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+          className="ml-2 px-4 bg-indigo-600 text-white rounded cursor-pointer hover:bg-green-700"
         >
           Skicka
         </button>
