@@ -4,6 +4,7 @@ import DOMPurify from "dompurify";
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [csrfToken, setCsrfToken] = useState("");
   const storedUser = localStorage.getItem("user");
   let user = null;
 
@@ -14,8 +15,6 @@ const Chat = () => {
       console.error("Kunde inte parsa user från localStorage", error);
     }
   }
-
-  const [csrfToken, setCsrfToken] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:3000/csrf", {

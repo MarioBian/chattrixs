@@ -15,6 +15,7 @@ const SideNav = () => {
 
   const handleLogout = () => {
     localStorage.clear();
+    setUser(null);
     navigate("/login");
   };
 
