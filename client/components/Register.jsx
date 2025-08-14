@@ -34,11 +34,13 @@ const Register = () => {
     setError("");
     setSuccess("");
 
+    const { username, password, email, avatar } = form;
+
     try {
       const res = await fetch(
         "https://chatify-api.up.railway.app/auth/register",
         {
-          method: "POST",
+          method: "PATCH",
           headers: {
             "Content-type": "application/json",
             "X-CSRF-Token": csrfToken,
@@ -52,9 +54,17 @@ const Register = () => {
           }),
         }
       );
+      const text = await res.text();
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "registration failed");
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { error: "Server returned invalid JSON" };
+      }
+
+      // const data = await res.json();
+      // if (!res.ok) throw new Error(data.error || "registration failed");
 
       setSuccess("Registration successfull! redirect... ");
       setTimeout(() => navigate("/login"), 1500);
