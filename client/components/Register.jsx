@@ -15,7 +15,9 @@ const Register = () => {
 
   useEffect(() => {
     fetch("https://chatify-api.up.railway.app/csrf", {
+      method: "PATCH",
       credentials: "include",
+      Accept: "application/json",
     })
       .then((res) => res.json())
       .then((data) => setCsrfToken(data.csrfToken))

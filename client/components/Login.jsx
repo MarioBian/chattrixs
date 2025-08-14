@@ -9,7 +9,7 @@ const Login = () => {
 
   useEffect(() => {
     fetch("https://chatify-api.up.railway.app/csrf", {
-      method: "GET",
+      method: "PATCH",
       credentials: "include",
       Accept: "application/json",
     })
@@ -107,8 +107,9 @@ const Login = () => {
           </a>
         </p>
 
-        <p className="text-center text-sm mt-2">
-          <a href="/changepassword" className="text-indigo-600 hover:underline">
+        <p className="text-center text-sm text-gray-500">
+          Har du glömt ditt lösenord?{" "}
+          <a href="/login" className="text-indigo-600 hover:underline">
             Byt lösenord
           </a>
         </p>
