@@ -7,6 +7,7 @@ const Chat = () => {
   const [csrfToken, setCsrfToken] = useState("");
   const storedUser = localStorage.getItem("user");
   let user = null;
+  let token = null;
 
   if (storedUser && storedUser !== "undefined") {
     try {
@@ -17,8 +18,10 @@ const Chat = () => {
   }
 
   useEffect(() => {
-    fetch("http://localhost:3000/csrf", {
+    fetch("https://chatify-api.up.railway.app/csrf", {
+      method: "PATCH",
       credentials: "include",
+      headers: { Accept: "application/json" },
     })
       .then((res) => {
         if (!res.ok) throw new Error("Misslyckades hämta CSRF-token");
@@ -29,12 +32,18 @@ const Chat = () => {
   }, []);
 
   const fetchMessages = async () => {
+    if (!user?.token) {
+      console.warn("Ingen token, kan inte hämta meddelande");
+      return;
+    }
     try {
-      const res = await fetch("http://localhost:3000/messages", {
-        credentials: "include",
+      const res = await fetch("https://chatify-api.up.railway.app/messages", {
+        method: "GET",
         headers: {
-          Authorization: user ? `Bearer ${user.token}` : "",
+          "content-type": "application/json",
+          Authorization: `Bearer ${user.token}`,
         },
+        credentials: "include",
       });
 
       if (!res.ok) {
@@ -60,7 +69,7 @@ const Chat = () => {
     if (!clean.trim()) return;
 
     try {
-      const res = await fetch("http://localhost:3000/messages", {
+      const res = await fetch("https://chatify-api.up.railway.app/messages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -86,14 +95,17 @@ const Chat = () => {
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`http://localhost:3000/messages/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: user ? `Bearer ${user.token}` : "",
-          "csrf-token": csrfToken,
-        },
-        credentials: "include",
-      });
+      const res = await fetch(
+        `https://chatify-api.up.railway.app/messages/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: user ? `Bearer ${user.token}` : "",
+            "csrf-token": csrfToken,
+          },
+          credentials: "include",
+        }
+      );
 
       if (!res.ok) {
         const errorText = await res.text();
@@ -118,7 +130,7 @@ const Chat = () => {
                 : "bg-white mr-auto text-left"
             }`}
           >
-            <p className="text-sm text-gray-800">{msg.text}</p>
+            <p className="text-sm text-gray-800">{msg.content}</p>
             <p className="text-xs text-gray-500 mt-1">
               {msg.user}
               {msg.user === user?.username && (

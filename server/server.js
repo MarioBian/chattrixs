@@ -6,7 +6,6 @@ const bcrypt = require("bcrypt");
 const cors = require("cors");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-const csrf = require("csurf");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,8 +16,8 @@ app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "PATCH", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 );
 
@@ -41,19 +40,6 @@ app.use(
 );
 
 app.use(express.json());
-
-const csrfProtection = csrf({
-  cookie: {
-    httpOnly: true,
-    sameSite: isProd ? "none" : "lax",
-    secure: isProd,
-  },
-});
-
-// Endpoint för att hämta CSRF-token
-app.get("/csrf", csrfProtection, (req, res) => {
-  res.json({ csrfToken: req.csrfToken() });
-});
 
 // === Helpers ===
 function readJson(file) {
@@ -80,7 +66,7 @@ function auth(req, res, next) {
 }
 
 // === Register ===
-app.post("/auth/register", csrfProtection, async (req, res) => {
+app.post("/auth/register", async (req, res) => {
   const { username, password, email, avatar } = req.body;
   const users = readJson("users.json");
 
@@ -104,7 +90,7 @@ app.post("/auth/register", csrfProtection, async (req, res) => {
 });
 
 // === Login ===
-app.post("/auth/token", csrfProtection, (req, res) => {
+app.post("/auth/token", (req, res) => {
   const { username, password } = req.body;
   const users = readJson("users.json");
   const user = users.find((u) => u.username === username);
@@ -130,7 +116,7 @@ app.post("/auth/token", csrfProtection, (req, res) => {
     .catch(() => res.status(500).json({ error: "Server error" }));
 });
 
-app.post("/auth/changepassword", csrfProtection, auth, async (req, res) => {
+app.post("/auth/changepassword", auth, async (req, res) => {
   const { currentPassword, newPassword } = req.body;
 
   if (!currentPassword || !newPassword) {
@@ -167,7 +153,7 @@ app.get("/messages", auth, (req, res) => {
 });
 
 // === Post message (protected) ===
-app.post("/messages", csrfProtection, auth, (req, res) => {
+app.post("/messages", auth, (req, res) => {
   const { content } = req.body;
   const clean = content.replace(/<[^>]*>?/gm, ""); // Enkel XSS-skydd
 
@@ -185,7 +171,7 @@ app.post("/messages", csrfProtection, auth, (req, res) => {
 });
 
 // === Delete message (protected) ===
-app.delete("/messages/:id", csrfProtection, auth, (req, res) => {
+app.delete("/messages/:id", auth, (req, res) => {
   const messages = readJson("messages.json");
   const id = Number(req.params.id);
   const msg = messages.find((m) => m.id === id);
@@ -197,6 +183,13 @@ app.delete("/messages/:id", csrfProtection, auth, (req, res) => {
   const updated = messages.filter((m) => m.id !== id);
   writeJson("messages.json", updated);
   res.json({ success: true });
+});
+
+// === CSRF-token route ===
+app.patch("/csrf", (req, res) => {
+  const csrfToken = Math.random().toString(36).substring(2);
+  if (req.session) req.session.csrfToken = csrfToken;
+  res.json({ csrfToken });
 });
 
 // === Start server ===

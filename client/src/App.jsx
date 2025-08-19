@@ -13,7 +13,16 @@ import Chat from "../components/Chat";
 import ChangePassword from "../components/ChangePassword";
 
 function App() {
-  const [user, setUser] = useState(localStorage.getItem("token"));
+  //const [user, setUser] = useState(localStorage.getItem("token"));
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser || storedUser === "undefined") return null;
+    try {
+      return JSON.parse(storedUser);
+    } catch {
+      return null;
+    }
+  });
   return (
     <Router>
       <Routes>
@@ -31,7 +40,7 @@ function App() {
               path="/chat"
               element={
                 <>
-                  <SideNav setUser={setUser} />
+                  <SideNav user={user} setUser={setUser} />
                   <Chat />
                 </>
               }

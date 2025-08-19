@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
-const Login = () => {
+const Login = ({ setUser }) => {
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const [csrfToken, setCsrfToken] = useState("");
@@ -11,7 +12,7 @@ const Login = () => {
     fetch("https://chatify-api.up.railway.app/csrf", {
       method: "PATCH",
       credentials: "include",
-      Accept: "application/json",
+      headers: { Accept: "application/json" },
     })
       .then((res) => res.json())
       .then((data) => setCsrfToken(data.csrfToken))
@@ -40,11 +41,21 @@ const Login = () => {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Login failed");
 
+      if (!res.ok) {
+        throw new Error(
+          data.error ||
+            "Du kunde tyvärr inte logga in, försök igen senare eller med ett annat inlogg 🥲"
+        );
+      }
+
+      // Spara token i localStorage
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
+      const decoded = jwtDecode(data.token);
+      // Spara användaren i state och localStorage
+      setUser(decoded.user);
+      localStorage.setItem("user", JSON.stringify(decoded.user));
+      // Navigera till chat
       navigate("/chat");
     } catch (err) {
       setError(err.message);

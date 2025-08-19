@@ -1,20 +1,22 @@
 import { useNavigate } from "react-router-dom";
 
-const SideNav = () => {
+const SideNav = ({ setUser }) => {
   const navigate = useNavigate();
-  const storedUser = localStorage.getItem("user");
   let user = null;
+  const storedUser = localStorage.getItem("user");
 
   if (storedUser && storedUser !== "undefined") {
     try {
       user = JSON.parse(storedUser);
     } catch (error) {
       console.error("Kunde inte parsa user från localStorage", error);
+      user = null;
     }
   }
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setUser(null);
     navigate("/login");
   };
@@ -28,7 +30,7 @@ const SideNav = () => {
           className="w-10 h-10 rounded-full"
         />
         <span className="text-lg font-medium text-gray-700">
-          {user?.username}
+          Välkommen {user || "gäst"}
         </span>
       </div>
       <button

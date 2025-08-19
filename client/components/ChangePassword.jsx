@@ -30,7 +30,7 @@ const ChangePassword = () => {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
-          "X-CSRF-Token": csrfToken,
+          /*"X-CSRF-Token" : csrfToken,*/
         },
         credentials: "include",
         body: JSON.stringify({ currentPassword, newPassword }),

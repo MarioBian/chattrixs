@@ -43,7 +43,7 @@ const Register = () => {
           method: "PATCH",
           headers: {
             "Content-type": "application/json",
-            "X-CSRF-Token": csrfToken,
+            /*"X-CSRF-Token": csrfToken,*/
           },
           credentials: "include",
           body: JSON.stringify({
