@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const SECRET = process.env.JWT_SECRET || "fallbackSecret123";
 
-// --- CORS setup ---
+// CORS setup
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -41,7 +41,7 @@ app.use(
 
 app.use(express.json());
 
-// === Helpers ===
+//  Helpers
 function readJson(file) {
   return JSON.parse(fs.readFileSync(file, "utf-8"));
 }
@@ -50,7 +50,7 @@ function writeJson(file, data) {
   fs.writeFileSync(file, JSON.stringify(data, null, 2));
 }
 
-// === Middleware för auth ===
+// Middleware för auth
 function auth(req, res, next) {
   const header = req.headers.authorization;
   if (!header) return res.sendStatus(401);
@@ -65,7 +65,7 @@ function auth(req, res, next) {
   }
 }
 
-// === Register ===
+//  Register
 app.post("/auth/register", async (req, res) => {
   const { username, password, email, avatar } = req.body;
   const users = readJson("users.json");
@@ -89,7 +89,7 @@ app.post("/auth/register", async (req, res) => {
   res.status(201).json({ message: "Registration successful" });
 });
 
-// === Login ===
+// Login
 app.post("/auth/token", (req, res) => {
   const { username, password } = req.body;
   const users = readJson("users.json");
@@ -147,12 +147,12 @@ app.post("/auth/changepassword", auth, async (req, res) => {
   res.json({ message: "Lösenord ändrat" });
 });
 
-// === Get messages (protected) ===
+//  Get messages (protected)
 app.get("/messages", auth, (req, res) => {
   res.json(readJson("messages.json"));
 });
 
-// === Post message (protected) ===
+// Post message (protected)
 app.post("/messages", auth, (req, res) => {
   const { content } = req.body;
   const clean = content.replace(/<[^>]*>?/gm, ""); // Enkel XSS-skydd
@@ -170,7 +170,7 @@ app.post("/messages", auth, (req, res) => {
   res.status(201).json(newMsg);
 });
 
-// === Delete message (protected) ===
+// Delete message (protected)
 app.delete("/messages/:id", auth, (req, res) => {
   const messages = readJson("messages.json");
   const id = Number(req.params.id);
@@ -185,14 +185,14 @@ app.delete("/messages/:id", auth, (req, res) => {
   res.json({ success: true });
 });
 
-// === CSRF-token route ===
+// CSRF-token route
 app.patch("/csrf", (req, res) => {
   const csrfToken = Math.random().toString(36).substring(2);
   if (req.session) req.session.csrfToken = csrfToken;
   res.json({ csrfToken });
 });
 
-// === Start server ===
+// Start server
 app.listen(PORT, () => {
   console.log(`✅ Servern körs på http://localhost:${PORT}`);
 });
