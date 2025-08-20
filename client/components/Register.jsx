@@ -66,7 +66,7 @@ const Register = () => {
       // const data = await res.json();
       // if (!res.ok) throw new Error(data.error || "registration failed");
 
-      setSuccess("Registration successfull! redirect... ");
+      setSuccess("Du är nu registrerad 👊");
       setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
       setError(err.message);
