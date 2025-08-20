@@ -116,37 +116,6 @@ app.post("/auth/token", (req, res) => {
     .catch(() => res.status(500).json({ error: "Server error" }));
 });
 
-app.post("/auth/changepassword", auth, async (req, res) => {
-  const { currentPassword, newPassword } = req.body;
-
-  if (!currentPassword || !newPassword) {
-    return res.status(400).json({ error: "Nuvarande och nytt lösenord krävs" });
-  }
-
-  const users = readJson("users.json");
-  const userIndex = users.findIndex((u) => u.id === req.userId);
-
-  if (userIndex === -1) {
-    return res.status(404).json({ error: "Användare hittades inte" });
-  }
-
-  const user = users[userIndex];
-
-  // Verifiera gammalt lösenord
-  const match = await bcrypt.compare(currentPassword, user.password);
-  if (!match) {
-    return res.status(401).json({ error: "Felaktigt nuvarande lösenord" });
-  }
-
-  // Hasha nytt lösenord och spara
-  const hashedNew = await bcrypt.hash(newPassword, 10);
-  users[userIndex].password = hashedNew;
-
-  writeJson("users.json", users);
-
-  res.json({ message: "Lösenord ändrat" });
-});
-
 //  Get messages (protected)
 app.get("/messages", auth, (req, res) => {
   res.json(readJson("messages.json"));
