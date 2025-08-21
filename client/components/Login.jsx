@@ -43,10 +43,13 @@ const Login = ({ setUser }) => {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(
-          data.error ||
-            "Du kunde tyvärr inte logga in, försök igen senare eller med ett annat inlogg 🥲"
-        );
+        const message =
+          data?.error === "Invalid credentials"
+            ? "Fel användarnamn eller lösenord, vänligen försök igen ✌️"
+            : data?.error ||
+              "Du kunde tyvärr inte logga in, försök igen senare eller med ett annat inlogg 🥲";
+
+        throw new Error(message);
       }
 
       // Spara token i localStorage

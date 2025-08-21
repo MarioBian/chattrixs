@@ -39,10 +39,12 @@ function App() {
             <Route
               path="/chat"
               element={
-                <>
-                  <SideNav user={user} setUser={setUser} />
-                  <Chat />
-                </>
+                <div className="flex justify-center items-start min-h-screen bg-gray-200 p-4">
+                  <div className="flex  flex-col max-w-md w-full bg-gray-100 shadow-lg">
+                    <SideNav user={user} setUser={setUser} />
+                    <Chat />
+                  </div>
+                </div>
               }
             />
             <Route path="*" element={<Navigate to="/chat" />} />

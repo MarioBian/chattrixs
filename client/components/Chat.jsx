@@ -8,6 +8,25 @@ const Chat = () => {
   const storedUser = localStorage.getItem("user");
   let user = null;
   let token = null;
+  //   const [fakeChat, setFakeChat] = useState([{
+  //     "text": "Tja tja, hur mår du?",
+  //     "avatar": "https://i.pravatar.cc/100?img=14"
+  //     "username": "Johnny",
+  //     "conversationId": null
+  //   },
+  //   {
+  //     "text": "Hallå!! Svara då!!",
+  //     "avatar": "https://i.pravatar.cc/100?img=14"
+  //     "username": "Johnny",
+  //     "conversationId": null
+  //   },
+  //   {
+  //     "text": "Sover du eller?! 😴",
+  //     "avatar": "https://i.pravatar.cc/100?img=14"
+  //     "username": "Johnny",
+  //     "conversationId": null
+  //   }
+  // ]);
 
   if (storedUser && storedUser !== "undefined") {
     try {
@@ -55,7 +74,6 @@ const Chat = () => {
       setMessages(data);
     } catch (error) {
       console.error(error.message);
-      // ev redirect till login eller visa meddelande
     }
   };
 
@@ -119,50 +137,52 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
-      <div className="flex-1 overflow-y-auto p-4 space-y-2">
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`max-w-sm p-3 rounded-xl shadow ${
-              msg.user === user?.username
-                ? "bg-indigo-100 ml-auto text-right"
-                : "bg-white mr-auto text-left"
-            }`}
-          >
-            <p className="text-sm text-gray-800">{msg.content}</p>
-            <p className="text-xs text-gray-500 mt-1">
-              {msg.user}
-              {msg.user === user?.username && (
-                <button
-                  onClick={() => handleDelete(msg.id)}
-                  className="ml-2 text-red-500 hover:underline"
-                >
-                  Radera
-                </button>
-              )}
-            </p>
-          </div>
-        ))}
-      </div>
+    <div className="flex items-center justify-center h-screen bg-gray-100">
+      <div className="flex flex-col h-full max-w-md w-full  bg-white shadow-lg">
+        <div className="flex-1 overflow-y-auto p-4 space-y-2 ">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`max-w-sm p-3 rounded-xl shadow ${
+                msg.user === user?.username
+                  ? "bg-indigo-100 ml-auto text-right"
+                  : "bg-white mr-auto text-left"
+              }`}
+            >
+              <p className="text-sm text-gray-800">{msg.content}</p>
+              <p className="text-xs text-gray-500 mt-1">
+                {msg.user}
+                {msg.user === user?.username && (
+                  <button
+                    onClick={() => handleDelete(msg.id)}
+                    className="ml-2 text-red-500 hover:underline"
+                  >
+                    Radera
+                  </button>
+                )}
+              </p>
+            </div>
+          ))}
+        </div>
 
-      <form
-        onSubmit={handleSend}
-        className="flex p-4 bg-white border-t border-gray-300"
-      >
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          className="flex-1 p-2 border rounded-lg focus:outline-none"
-          placeholder="Skriv ett meddelande..."
-        />
-        <button
-          type="submit"
-          className="ml-2 px-4 bg-indigo-600 text-white rounded cursor-pointer hover:bg-green-700"
+        <form
+          onSubmit={handleSend}
+          className="flex p-4 bg-white border-t border-gray-300"
         >
-          Skicka
-        </button>
-      </form>
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="flex-1 p-2 border rounded-lg focus:outline-none"
+            placeholder="Skriv ett meddelande..."
+          />
+          <button
+            type="submit"
+            className="ml-2 px-4 bg-indigo-600 text-white rounded cursor-pointer hover:bg-green-700"
+          >
+            Skicka
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
