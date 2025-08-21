@@ -2,31 +2,30 @@ import { useEffect, useState } from "react";
 import DOMPurify from "dompurify";
 
 const Chat = () => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([
+    {
+      text: "Halloj hur mår du?",
+      avatar: "https://i.pravatar.cc/100?",
+      username: "Johnny",
+      conversationId: null,
+    },
+    {
+      text: "Hoppas det går bra med plugget",
+      avatar: "https://i.pravatar.cc/100?",
+      username: "Johnny",
+      conversationId: null,
+    },
+    {
+      text: "Vi skulle ju åka hoj, men lycka till med studierna 😃",
+      avatar: "https://i.pravatar.cc/100?",
+      username: "Johnny",
+      conversationId: null,
+    },
+  ]);
   const [input, setInput] = useState("");
-  const [csrfToken, setCsrfToken] = useState("");
+  const [currentConversationId, setCurrentConversationId] = useState(null);
   const storedUser = localStorage.getItem("user");
   let user = null;
-  let token = null;
-  //   const [fakeChat, setFakeChat] = useState([{
-  //     "text": "Tja tja, hur mår du?",
-  //     "avatar": "https://i.pravatar.cc/100?img=14"
-  //     "username": "Johnny",
-  //     "conversationId": null
-  //   },
-  //   {
-  //     "text": "Hallå!! Svara då!!",
-  //     "avatar": "https://i.pravatar.cc/100?img=14"
-  //     "username": "Johnny",
-  //     "conversationId": null
-  //   },
-  //   {
-  //     "text": "Sover du eller?! 😴",
-  //     "avatar": "https://i.pravatar.cc/100?img=14"
-  //     "username": "Johnny",
-  //     "conversationId": null
-  //   }
-  // ]);
 
   if (storedUser && storedUser !== "undefined") {
     try {
@@ -35,20 +34,6 @@ const Chat = () => {
       console.error("Kunde inte parsa user från localStorage", error);
     }
   }
-
-  useEffect(() => {
-    fetch("https://chatify-api.up.railway.app/csrf", {
-      method: "PATCH",
-      credentials: "include",
-      headers: { Accept: "application/json" },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Misslyckades hämta CSRF-token");
-        return res.json();
-      })
-      .then((data) => setCsrfToken(data.csrfToken))
-      .catch((error) => console.error(error.message));
-  }, []);
 
   const fetchMessages = async () => {
     if (!user?.token) {
@@ -60,7 +45,7 @@ const Chat = () => {
         method: "GET",
         headers: {
           "content-type": "application/json",
-          Authorization: `Bearer ${user.token}`,
+          Authorization: user ? `Bearer ${user.token}` : "",
         },
         credentials: "include",
       });
@@ -83,8 +68,23 @@ const Chat = () => {
 
   const handleSend = async (e) => {
     e.preventDefault();
+    console.log("Skicka meddelande:", input);
     const clean = DOMPurify.sanitize(input);
     if (!clean.trim()) return;
+
+    const newMsg = {
+      text: clean,
+      username: "Du",
+      id: Date.now(),
+      conversationId: null,
+    };
+    setMessages((prev) => [...prev, newMsg]);
+    setInput("");
+
+    setTimeout(() => {
+      const randomIndex = Math.floor(Math.random() * messages.length);
+      setMessages((prev) => [...prev, messages[randomIndex]]);
+    }, 5000);
 
     try {
       const res = await fetch("https://chatify-api.up.railway.app/messages", {
@@ -92,10 +92,12 @@ const Chat = () => {
         headers: {
           "Content-Type": "application/json",
           Authorization: user ? `Bearer ${user.token}` : "",
-          "csrf-token": csrfToken,
         },
         credentials: "include",
-        body: JSON.stringify({ content: clean }),
+        body: JSON.stringify({
+          text: clean,
+          conversationId: currentConversationId,
+        }),
       });
 
       if (!res.ok) {
@@ -112,6 +114,9 @@ const Chat = () => {
   };
 
   const handleDelete = async (id) => {
+    setMessages((prev) => prev.filter((msg) => msg.id !== id));
+
+    if (!user?.token) return;
     try {
       const res = await fetch(
         `https://chatify-api.up.railway.app/messages/${id}`,
@@ -119,7 +124,6 @@ const Chat = () => {
           method: "DELETE",
           headers: {
             Authorization: user ? `Bearer ${user.token}` : "",
-            "csrf-token": csrfToken,
           },
           credentials: "include",
         }
@@ -140,22 +144,29 @@ const Chat = () => {
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <div className="flex flex-col h-full max-w-md w-full  bg-white shadow-lg">
         <div className="flex-1 overflow-y-auto p-4 space-y-2 ">
-          {messages.map((msg) => (
+          {messages.map((msg, index) => (
             <div
-              key={msg.id}
+              key={msg.id || index}
               className={`max-w-sm p-3 rounded-xl shadow ${
-                msg.user === user?.username
+                msg.user === "Du"
                   ? "bg-indigo-100 ml-auto text-right"
                   : "bg-white mr-auto text-left"
               }`}
             >
-              <p className="text-sm text-gray-800">{msg.content}</p>
+              {msg.avatar && (
+                <img
+                  src={msg.avatar}
+                  alt={msg.username}
+                  className="w-8 h-8 rounded-full mr-2"
+                />
+              )}
+              <p className="text-sm text-gray-800">{msg.text}</p>
               <p className="text-xs text-gray-500 mt-1">
-                {msg.user}
-                {msg.user === user?.username && (
+                {msg.username}
+                {msg.username === "Du" && (
                   <button
                     onClick={() => handleDelete(msg.id)}
-                    className="ml-2 text-red-500 hover:underline"
+                    className="ml-2 text-red-500 hover:underline cursor-pointer"
                   >
                     Radera
                   </button>
