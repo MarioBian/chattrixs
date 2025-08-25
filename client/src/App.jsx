@@ -8,14 +8,14 @@ import {
 import { useState } from "react";
 import Login from "../components/Login";
 import Register from "../components/Register";
-import SideNav from "../components/SideNav";
 import Chat from "../components/Chat";
 import ChangePassword from "../components/ChangePassword";
+import TopNav from "../components/TopNav";
 
 function App() {
-  //const [user, setUser] = useState(localStorage.getItem("token"));
+  //const [user, setUser] = useState(sessionStorage.getItem("token"));
   const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = sessionStorage.getItem("user");
     if (!storedUser || storedUser === "undefined") return null;
     try {
       return JSON.parse(storedUser);
@@ -41,7 +41,7 @@ function App() {
               element={
                 <div className="flex justify-center items-start min-h-screen bg-gray-200 p-4">
                   <div className="flex  flex-col max-w-md w-full bg-gray-100 shadow-lg">
-                    <SideNav user={user} setUser={setUser} />
+                    <TopNav user={user} setUser={setUser} />
                     <Chat />
                   </div>
                 </div>

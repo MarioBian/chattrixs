@@ -7,13 +7,11 @@ const ChangePassword = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const token = localStorage.getItem("token");
+  const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
-    fetch("http://localhost:3000/csrf", {
-      credentials: "include",
-    })
+    fetch("http://localhost:3000/csrf", {})
       .then((res) => res.json())
       .then((data) => setCsrfToken(data.csrfToken))
       .catch(() => setError("Kunde inte hämta CSRF-token"));
@@ -30,9 +28,7 @@ const ChangePassword = () => {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
-          /*"X-CSRF-Token" : csrfToken,*/
         },
-        credentials: "include",
         body: JSON.stringify({ currentPassword, newPassword }),
       });
 

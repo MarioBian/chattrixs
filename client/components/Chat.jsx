@@ -1,37 +1,38 @@
 import { useEffect, useState } from "react";
 import DOMPurify from "dompurify";
-
+// FIXA!! Så att man ser meddelande i swaggern och hämtar TOKEN!!!
 const Chat = () => {
   const [messages, setMessages] = useState([
     {
       text: "Halloj hur mår du?",
       avatar: "https://i.pravatar.cc/100?",
-      username: "Johnny",
+      username: "Marre",
       conversationId: null,
     },
     {
       text: "Hoppas det går bra med plugget",
       avatar: "https://i.pravatar.cc/100?",
-      username: "Johnny",
+      username: "Marre",
       conversationId: null,
     },
     {
       text: "Vi skulle ju åka hoj, men lycka till med studierna 😃",
       avatar: "https://i.pravatar.cc/100?",
-      username: "Johnny",
+      username: "Marre",
       conversationId: null,
     },
   ]);
+
   const [input, setInput] = useState("");
   const [currentConversationId, setCurrentConversationId] = useState(null);
-  const storedUser = localStorage.getItem("user");
+  const storedUser = sessionStorage.getItem("user");
   let user = null;
 
   if (storedUser && storedUser !== "undefined") {
     try {
       user = JSON.parse(storedUser);
     } catch (error) {
-      console.error("Kunde inte parsa user från localStorage", error);
+      console.error("Kunde inte parsa user från sessionStorage", error);
     }
   }
 
@@ -45,9 +46,7 @@ const Chat = () => {
         method: "GET",
         headers: {
           "content-type": "application/json",
-          Authorization: user ? `Bearer ${user.token}` : "",
         },
-        credentials: "include",
       });
 
       if (!res.ok) {
@@ -81,10 +80,10 @@ const Chat = () => {
     setMessages((prev) => [...prev, newMsg]);
     setInput("");
 
-    setTimeout(() => {
-      const randomIndex = Math.floor(Math.random() * messages.length);
-      setMessages((prev) => [...prev, messages[randomIndex]]);
-    }, 5000);
+    // setTimeout(() => {
+    //   const randomIndex = Math.floor(Math.random() * messages.length);
+    //   setMessages((prev) => [...prev, messages[randomIndex]]);
+    // }, 5000);
 
     try {
       const res = await fetch("https://chatify-api.up.railway.app/messages", {
@@ -93,7 +92,6 @@ const Chat = () => {
           "Content-Type": "application/json",
           Authorization: user ? `Bearer ${user.token}` : "",
         },
-        credentials: "include",
         body: JSON.stringify({
           text: clean,
           conversationId: currentConversationId,
@@ -125,7 +123,6 @@ const Chat = () => {
           headers: {
             Authorization: user ? `Bearer ${user.token}` : "",
           },
-          credentials: "include",
         }
       );
 

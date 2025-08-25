@@ -11,7 +11,6 @@ const Login = ({ setUser }) => {
   useEffect(() => {
     fetch("https://chatify-api.up.railway.app/csrf", {
       method: "PATCH",
-      credentials: "include",
       headers: { Accept: "application/json" },
     })
       .then((res) => res.json())
@@ -36,7 +35,6 @@ const Login = ({ setUser }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",
         body: JSON.stringify({ ...form, csrfToken }),
       });
 
@@ -52,12 +50,12 @@ const Login = ({ setUser }) => {
         throw new Error(message);
       }
 
-      // Spara token i localStorage
-      localStorage.setItem("token", data.token);
+      // Spara token i sessionStorage
+      sessionStorage.setItem("token", data.token);
       const decoded = jwtDecode(data.token);
-      // Spara användaren i state och localStorage
+      // Spara användaren i state och sessionStorage
       setUser(decoded.user);
-      localStorage.setItem("user", JSON.stringify(decoded.user));
+      sessionStorage.setItem("user", JSON.stringify(decoded.user));
       // Navigera till chat
       navigate("/chat");
     } catch (err) {
