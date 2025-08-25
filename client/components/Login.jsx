@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 
 const Login = ({ setUser }) => {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -46,16 +46,18 @@ const Login = ({ setUser }) => {
             ? "Fel användarnamn eller lösenord, vänligen försök igen ✌️"
             : data?.error ||
               "Du kunde tyvärr inte logga in, försök igen senare eller med ett annat inlogg 🥲";
-
         throw new Error(message);
       }
 
       // Spara token i sessionStorage
-      sessionStorage.setItem("token", data.token);
+      //sessionStorage.setItem("token", data.token);
       const decoded = jwtDecode(data.token);
+      const userData = { ...decoded, token: data.token };
+
       // Spara användaren i state och sessionStorage
-      setUser(decoded.user);
-      sessionStorage.setItem("user", JSON.stringify(decoded.user));
+      sessionStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
+
       // Navigera till chat
       navigate("/chat");
     } catch (err) {

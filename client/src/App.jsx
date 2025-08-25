@@ -13,10 +13,9 @@ import ChangePassword from "../components/ChangePassword";
 import TopNav from "../components/TopNav";
 
 function App() {
-  //const [user, setUser] = useState(sessionStorage.getItem("token"));
   const [user, setUser] = useState(() => {
     const storedUser = sessionStorage.getItem("user");
-    if (!storedUser || storedUser === "undefined") return null;
+    if (!storedUser) return null;
     try {
       return JSON.parse(storedUser);
     } catch {
@@ -42,7 +41,7 @@ function App() {
                 <div className="flex justify-center items-start min-h-screen bg-gray-200 p-4">
                   <div className="flex  flex-col max-w-md w-full bg-gray-100 shadow-lg">
                     <TopNav user={user} setUser={setUser} />
-                    <Chat />
+                    <Chat user={user} />
                   </div>
                 </div>
               }

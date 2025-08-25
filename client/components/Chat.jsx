@@ -1,40 +1,33 @@
 import { useEffect, useState } from "react";
 import DOMPurify from "dompurify";
-// FIXA!! Så att man ser meddelande i swaggern och hämtar TOKEN!!!
-const Chat = () => {
-  const [messages, setMessages] = useState([
+
+const Chat = ({ user }) => {
+  const [fakeMessages] = useState([
     {
       text: "Halloj hur mår du?",
       avatar: "https://i.pravatar.cc/100?",
       username: "Marre",
       conversationId: null,
+      id: "fake_id_1",
     },
     {
       text: "Hoppas det går bra med plugget",
       avatar: "https://i.pravatar.cc/100?",
       username: "Marre",
       conversationId: null,
+      id: "fake_id_2",
     },
     {
       text: "Vi skulle ju åka hoj, men lycka till med studierna 😃",
       avatar: "https://i.pravatar.cc/100?",
       username: "Marre",
       conversationId: null,
+      id: "fake_id_3",
     },
   ]);
-
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [currentConversationId, setCurrentConversationId] = useState(null);
-  const storedUser = sessionStorage.getItem("user");
-  let user = null;
-
-  if (storedUser && storedUser !== "undefined") {
-    try {
-      user = JSON.parse(storedUser);
-    } catch (error) {
-      console.error("Kunde inte parsa user från sessionStorage", error);
-    }
-  }
 
   const fetchMessages = async () => {
     if (!user?.token) {
@@ -45,7 +38,8 @@ const Chat = () => {
       const res = await fetch("https://chatify-api.up.railway.app/messages", {
         method: "GET",
         headers: {
-          "content-type": "application/json",
+          accept: "application/json",
+          Authorization: `Bearer ${user.token}`,
         },
       });
 
@@ -55,7 +49,11 @@ const Chat = () => {
       }
 
       const data = await res.json();
-      setMessages(data);
+      const myMessages = data.map((msg) => ({
+        ...msg,
+        username: "Du",
+      }));
+      setMessages(fakeMessages.concat(myMessages));
     } catch (error) {
       console.error(error.message);
     }
@@ -71,26 +69,19 @@ const Chat = () => {
     const clean = DOMPurify.sanitize(input);
     if (!clean.trim()) return;
 
-    const newMsg = {
-      text: clean,
-      username: "Du",
-      id: Date.now(),
-      conversationId: null,
-    };
-    setMessages((prev) => [...prev, newMsg]);
     setInput("");
-
-    // setTimeout(() => {
-    //   const randomIndex = Math.floor(Math.random() * messages.length);
-    //   setMessages((prev) => [...prev, messages[randomIndex]]);
-    // }, 5000);
+    setTimeout(() => {
+      // TODO: lägg till logik här att bara hämta fake meddelanden.. id är ju sträng o har fake_id_{nr} så du kan filter typ
+      const randomIndex = Math.floor(Math.random() * messages.length);
+      setMessages((prev) => [...prev, messages[randomIndex]]);
+    }, 5000);
 
     try {
       const res = await fetch("https://chatify-api.up.railway.app/messages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: user ? `Bearer ${user.token}` : "",
+          Authorization: `Bearer ${user.token}`,
         },
         body: JSON.stringify({
           text: clean,
@@ -104,7 +95,14 @@ const Chat = () => {
       }
 
       const newMsg = await res.json();
-      setMessages((prev) => [...prev, newMsg]);
+      setMessages((prev) => [
+        ...prev.map((msg) =>
+          typeof msg.id === "number" ? { ...msg, username: "Du" } : msg
+        ),
+        ...(typeof newMsg.latestMessage.id === "number"
+          ? [{ ...newMsg.latestMessage, username: "Du" }]
+          : [newMsg.latestMessage]),
+      ]);
       setInput("");
     } catch (error) {
       console.error(error.message);
@@ -121,7 +119,7 @@ const Chat = () => {
         {
           method: "DELETE",
           headers: {
-            Authorization: user ? `Bearer ${user.token}` : "",
+            Authorization: `Bearer ${user.token}`,
           },
         }
       );
@@ -157,9 +155,10 @@ const Chat = () => {
                   className="w-8 h-8 rounded-full mr-2"
                 />
               )}
-              <p className="text-sm text-gray-800">{msg.text}</p>
+              <p className="text-sm text-gray-800">
+                <strong>{msg.username}:</strong> {msg.text}
+              </p>
               <p className="text-xs text-gray-500 mt-1">
-                {msg.username}
                 {msg.username === "Du" && (
                   <button
                     onClick={() => handleDelete(msg.id)}
