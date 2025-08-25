@@ -1,26 +1,26 @@
 import { useNavigate } from "react-router-dom";
+import React from "react";
 
-const SideNav = ({ setUser }) => {
+const TopNav = ({ setUser }) => {
   const navigate = useNavigate();
   let user = null;
-  const storedUser = localStorage.getItem("user");
+  const storedUser = sessionStorage.getItem("user");
 
   if (storedUser && storedUser !== "undefined") {
     try {
       user = JSON.parse(storedUser);
     } catch (error) {
-      console.error("Kunde inte parsa user från localStorage", error);
+      console.error("Kunde inte parsa user från sessionStorage", error);
       user = null;
     }
   }
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
     setUser(null);
     navigate("/login");
   };
-
   return (
     <div className="flex items-center justify-between px-6 py-2 bg-gray-100 shadow-lg w-full">
       <img
@@ -42,4 +42,4 @@ const SideNav = ({ setUser }) => {
   );
 };
 
-export default SideNav;
+export default TopNav;
