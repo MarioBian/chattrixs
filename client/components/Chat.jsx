@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DOMPurify from "dompurify";
 
 const Chat = ({ user }) => {
@@ -53,7 +53,8 @@ const Chat = ({ user }) => {
         ...msg,
         username: "Du",
       }));
-      setMessages(fakeMessages.concat(myMessages));
+      setMessages(myMessages);
+      // setMessages(fakeMessages.concat(myMessages));
     } catch (error) {
       console.error(error.message);
     }
@@ -63,6 +64,29 @@ const Chat = ({ user }) => {
     fetchMessages();
   }, []);
 
+  const fakeIndex = useRef(0);
+  useEffect(() => {
+    //if (messages.length === 0) return;
+
+    const sortedFakeMessages = [...fakeMessages].sort(
+      (a, b) => parseInt(a.id.split("_")[2]) - parseInt(b.id.split("_")[2])
+    );
+
+    const interval = setInterval(() => {
+      const i = fakeIndex.current;
+
+      if (i >= sortedFakeMessages.length) {
+        clearInterval(interval); // stoppa när alla meddelanden lagts till
+        return;
+      }
+
+      setMessages((prev) => [...prev, sortedFakeMessages[i]]);
+      fakeIndex.current += 1; // gå vidare till nästa fake
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const handleSend = async (e) => {
     e.preventDefault();
     console.log("Skicka meddelande:", input);
@@ -70,11 +94,18 @@ const Chat = ({ user }) => {
     if (!clean.trim()) return;
 
     setInput("");
-    setTimeout(() => {
-      // TODO: lägg till logik här att bara hämta fake meddelanden.. id är ju sträng o har fake_id_{nr} så du kan filter typ
-      const randomIndex = Math.floor(Math.random() * messages.length);
-      setMessages((prev) => [...prev, messages[randomIndex]]);
-    }, 5000);
+
+    // setTimeout(() => {
+    //   const onlyFakeMessages = fakeMessages.filter((msg) =>
+    //     msg.id.startsWith("fake_id_")
+    //   );
+
+    //   if (onlyFakeMessages.length > 0) {
+    //     const randomIndex = Math.floor(Math.random() * onlyFakeMessages.length);
+    //     const randomFakeMessages = onlyFakeMessages[randomIndex];
+    //     setMessages((prev) => [...prev, randomFakeMessages]);
+    //   }
+    // }, 2000);
 
     try {
       const res = await fetch("https://chatify-api.up.railway.app/messages", {
@@ -143,7 +174,7 @@ const Chat = ({ user }) => {
             <div
               key={msg.id || index}
               className={`max-w-sm p-3 rounded-xl shadow ${
-                msg.user === "Du"
+                msg.username === "Du"
                   ? "bg-indigo-100 ml-auto text-right"
                   : "bg-white mr-auto text-left"
               }`}
