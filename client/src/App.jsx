@@ -38,8 +38,8 @@ function App() {
             <Route
               path="/chat"
               element={
-                <div className="flex justify-center items-start min-h-screen bg-gray-200 p-4">
-                  <div className="flex  flex-col max-w-md w-full bg-gray-100 shadow-lg">
+                <div className="chat-bg flex justify-center items-start min-h-screen bg-gradient-to-br from-indigo-900 via-purple-800 to-blue-900 p-6">
+                  <div className="flex flex-col max-w-md w-full bg-white/10 backdrop-blur-lg shadow-2xl rounded-2xl overflow-hidden border border-white/20">
                     <TopNav user={user} setUser={setUser} />
                     <Chat user={user} />
                   </div>

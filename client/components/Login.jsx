@@ -66,42 +66,42 @@ const Login = ({ setUser }) => {
   };
 
   return (
-    <div className="flex min-h-full flex items-center flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+    <div className="h-screen w-full flex items-center justify-center bg-gradient-to-br from-purple-700 via-indigo-700 to-blue-700">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm space-y-6"
+        className="w-full max-w-md bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/20"
       >
         <div className="sm:mx-auto text-center sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-            Logga in
+          <h2 className="text-3xl font-bold text-white text-center mb-6">
+            🔐 Logga in
           </h2>
-          <p className="text-sm text-gray-500">Välkommen tillbaka!</p>
+          <p className="text-gray-300 text-center text-sm mt-6">
+            Välkommen tillbaka!
+          </p>
         </div>
 
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">
+          <label className="block text-sm text-gray-200 mb-1">
             Användarnamn
           </label>
           <input
             name="username"
             placeholder="Användarnamn"
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+            className="w-full px-4 py-2 rounded-xl bg-white/20 border border-white/30 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
             onChange={handleChange}
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">
-            Lösenord
-          </label>
+          <label className="block text-sm text-gray-200 mb-1">Lösenord</label>
           <input
             name="password"
             type="password"
             placeholder="••••••••"
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+            className="w-full px-4 py-2 rounded-xl bg-white/20 border border-white/30 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
             onChange={handleChange}
             required
           />
@@ -109,21 +109,27 @@ const Login = ({ setUser }) => {
 
         <button
           type="submit"
-          className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 cursor-pointer transition"
+          className="w-full mt-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold transition shadow-lg cursor-pointer"
         >
           Logga in
         </button>
 
-        <p className="text-center text-sm text-gray-500">
+        <p className="text-gray-300 text-center text-sm mt-6">
           Har du inget konto?{" "}
-          <a href="/register" className="text-indigo-600 hover:underline">
+          <a
+            href="/register"
+            className="text-purple-300 hover:text-white underline"
+          >
             Registrera dig
           </a>
         </p>
 
-        <p className="text-center text-sm text-gray-500">
+        <p className="text-gray-300 text-center text-sm mt-6">
           Har du glömt ditt lösenord?{" "}
-          <a href="/login" className="text-indigo-600 hover:underline">
+          <a
+            href="/login"
+            className="text-purple-300 hover:text-white underline"
+          >
             Byt lösenord
           </a>
         </p>

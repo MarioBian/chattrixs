@@ -66,8 +66,6 @@ const Chat = ({ user }) => {
 
   const fakeIndex = useRef(0);
   useEffect(() => {
-    //if (messages.length === 0) return;
-
     const sortedFakeMessages = [...fakeMessages].sort(
       (a, b) => parseInt(a.id.split("_")[2]) - parseInt(b.id.split("_")[2])
     );
@@ -167,33 +165,33 @@ const Chat = ({ user }) => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="flex flex-col h-full max-w-md w-full  bg-white shadow-lg">
-        <div className="flex-1 overflow-y-auto p-4 space-y-2 ">
+    <div className="flex items-center justify-center h-screen bg-gradient-to-br from-indigo-900 via-purple-800 to-blue-900 p-4">
+      <div className="flex flex-col h-full max-h-[700px] w-full max-w-md bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20">
+        <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {messages.map((msg, index) => (
             <div
               key={msg.id || index}
-              className={`max-w-sm p-3 rounded-xl shadow ${
+              className={`max-w-[70%] px-4 py-2 rounded-2xl shadow-lg flex flex-col${
                 msg.username === "Du"
-                  ? "bg-indigo-100 ml-auto text-right"
-                  : "bg-white mr-auto text-left"
+                  ? "bg-blue-600 text-white rounded-br-none ml-auto"
+                  : "bg-gray-200 text-gray-800 rounded-bl-none mr-auto"
               }`}
             >
               {msg.avatar && (
                 <img
                   src={msg.avatar}
                   alt={msg.username}
-                  className="w-8 h-8 rounded-full mr-2"
+                  className="w-8 h-8 rounded-full mr-2 shadow"
                 />
               )}
-              <p className="text-sm text-gray-800">
+              <p className="text-sm">
                 <strong>{msg.username}:</strong> {msg.text}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-sm">
                 {msg.username === "Du" && (
                   <button
                     onClick={() => handleDelete(msg.id)}
-                    className="ml-2 text-red-500 hover:underline cursor-pointer"
+                    className="text-xs text-red-300 hover:text-red-500 mt-1 ml-3  self-start cursor-pointer"
                   >
                     Radera
                   </button>
@@ -205,17 +203,17 @@ const Chat = ({ user }) => {
 
         <form
           onSubmit={handleSend}
-          className="flex p-4 bg-white border-t border-gray-300"
+          className="p-4 border-t border-white/20 flex gap-2"
         >
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="flex-1 p-2 border rounded-lg focus:outline-none"
+            className="flex-1 px-4 py-2 rounded-full bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Skriv ett meddelande..."
           />
           <button
             type="submit"
-            className="ml-2 px-4 bg-indigo-600 text-white rounded cursor-pointer hover:bg-green-700"
+            className="px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-500 transition cursor-pinter"
           >
             Skicka
           </button>
