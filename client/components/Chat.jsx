@@ -54,7 +54,6 @@ const Chat = ({ user }) => {
         username: "Du",
       }));
       setMessages(myMessages);
-      // setMessages(fakeMessages.concat(myMessages));
     } catch (error) {
       console.error(error.message);
     }
@@ -74,12 +73,12 @@ const Chat = ({ user }) => {
       const i = fakeIndex.current;
 
       if (i >= sortedFakeMessages.length) {
-        clearInterval(interval); // stoppa när alla meddelanden lagts till
+        clearInterval(interval);
         return;
       }
 
       setMessages((prev) => [...prev, sortedFakeMessages[i]]);
-      fakeIndex.current += 1; // gå vidare till nästa fake
+      fakeIndex.current += 1;
     }, 4000);
 
     return () => clearInterval(interval);
@@ -92,18 +91,6 @@ const Chat = ({ user }) => {
     if (!clean.trim()) return;
 
     setInput("");
-
-    // setTimeout(() => {
-    //   const onlyFakeMessages = fakeMessages.filter((msg) =>
-    //     msg.id.startsWith("fake_id_")
-    //   );
-
-    //   if (onlyFakeMessages.length > 0) {
-    //     const randomIndex = Math.floor(Math.random() * onlyFakeMessages.length);
-    //     const randomFakeMessages = onlyFakeMessages[randomIndex];
-    //     setMessages((prev) => [...prev, randomFakeMessages]);
-    //   }
-    // }, 2000);
 
     try {
       const res = await fetch("https://chatify-api.up.railway.app/messages", {
