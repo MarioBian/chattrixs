@@ -184,7 +184,7 @@ const Chat = ({ user }) => {
                   className="w-8 h-8 rounded-full mr-2 shadow"
                 />
               )}
-              <p className="text-sm">
+              <p className="text-sm text-white">
                 <strong>{msg.username}:</strong> {msg.text}
               </p>
               <p className="text-sm">
