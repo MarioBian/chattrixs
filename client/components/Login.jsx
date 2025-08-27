@@ -49,16 +49,12 @@ const Login = ({ setUser }) => {
         throw new Error(message);
       }
 
-      // Spara token i sessionStorage
-      //sessionStorage.setItem("token", data.token);
       const decoded = jwtDecode(data.token);
       const userData = { ...decoded, token: data.token };
 
-      // Spara användaren i state och sessionStorage
       sessionStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
 
-      // Navigera till chat
       navigate("/chat");
     } catch (err) {
       setError(err.message);
