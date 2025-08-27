@@ -54,9 +54,6 @@ const Register = () => {
       );
       const data = await res.json();
 
-      // const data = await res.json();
-      // if (!res.ok) throw new Error(data.error || "registration failed");
-
       setSuccess(data.message);
       setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
